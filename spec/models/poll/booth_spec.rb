@@ -73,5 +73,11 @@ describe Poll::Booth do
 
       expect(Poll::Booth.available_for_admin.count).to eq 1
     end
+
+    it "returns booths associated to future polls" do
+      booth_for_future_poll = create(:poll_booth, polls: [create(:poll, starts_at: Time.current + 1.day)])
+
+      expect(Poll::Booth.available_for_admin).to include(booth_for_future_poll)
+    end
   end
 end
