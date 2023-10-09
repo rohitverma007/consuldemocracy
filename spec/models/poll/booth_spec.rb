@@ -43,6 +43,22 @@ describe Poll::Booth do
     end
   end
 
+  describe ".available" do
+    it "returns booths associated to current polls" do
+      booth_for_current_poll = create(:poll_booth, polls: [create(:poll)])
+      booth_for_expired_poll = create(:poll_booth, polls: [create(:poll, :expired)])
+
+      expect(Poll::Booth.available).to eq [booth_for_current_poll]
+      expect(Poll::Booth.available).not_to include(booth_for_expired_poll)
+    end
+
+    it "returns polls with multiple translations only once" do
+      create(:poll_booth, polls: [create(:poll, name: "English", name_es: "Spanish")])
+
+      expect(Poll::Booth.available.count).to eq 1
+    end
+  end
+
   describe ".available_for_admin" do
     it "returns booths associated to current polls" do
       booth_for_current_poll = create(:poll_booth, polls: [create(:poll)])
